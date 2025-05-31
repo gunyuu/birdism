@@ -1,38 +1,73 @@
 import streamlit as st
 import google.generativeai as genai
+import requests
+import re
 
-# Load API key
+# Configure Gemini
 genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
-
-# Set up model
 model = genai.GenerativeModel("models/gemini-1.5-flash")
 
-st.set_page_config(page_title="Birdsona Generator", page_icon="🐦")
-st.title("🐦 Find Your Birdsona!")
-st.write("Describe your personality, habits, or mood—and discover which bird matches you!")
+# UI Setup
+st.set_page_config(page_title="Birdhism Reincarnation", page_icon="🐦")
+st.title("🐦 What kind of bird you will be in the next live?!")
+st.write("Describe your personality, habits, or mood — and discover which bird matches you!")
 
-# User input
-user_input = st.text_area("Tell us about yourself:", placeholder="e.g., I'm an introvert who loves the night, quiet forests, and deep thinking...")
+# Text input
+user_input = st.text_area("Tell us about yourself:", placeholder="e.g., I'm curious, love the ocean, and enjoy peaceful mornings...")
+
+def get_bird_image(bird_name):
+    """Fetch bird image from Google Custom Search"""
+    api_key = st.secrets["GOOGLE_API_KEY"]
+    cse_id = st.secrets["GOOGLE_CSE_ID"]
+    query = f"{bird_name} bird"
+
+    url = "https://www.googleapis.com/customsearch/v1"
+    params = {
+        "key": api_key,
+        "cx": cse_id,
+        "q": query,
+        "searchType": "image",
+        "num": 1,
+        "safe": "high"
+    }
+
+    try:
+        response = requests.get(url, params=params)
+        results = response.json()
+        return results["items"][0]["link"] if "items" in results else None
+    except Exception as e:
+        return None
+
+def extract_bird_name(text):
+    """Extract bird name from Gemini response"""
+    match = re.search(r"\*\*Your Birdsona: (.+?)\*\*", text)
+    return match.group(1).strip() if match else None
 
 if st.button("Reveal My Birdsona") and user_input:
-    with st.spinner("Consulting the flock..."):
-        prompt = f"""You're an expert in matching birds with human personalities. A user wrote the following description about themselves:
+    with st.spinner("Consulting the birds..."):
+        prompt = f"""You're an expert in matching birds with human personalities. A user wrote:
 
 \"\"\"{user_input}\"\"\"
 
-Based on this, tell them:
-- The name of a bird species that fits
-- A short fun description of why it matches
+Based on this, reply with:
+- The bird species that best matches (bold heading format)
+- A short, fun description of why it fits
 - One fun fact about that bird
-- Keep the tone light, warm, and creative
-Format like:
+Keep the tone light and creative. Format it like:
 **Your Birdsona: [Bird Name]**
-[Description]
-Fun Fact: [fact]"""
+[Why it matches]
+Fun Fact: [Interesting fact]"""
 
         response = model.generate_content(prompt)
-        st.markdown(response.text)
+        output = response.text
+        st.markdown(output)
 
-        st.markdown("---")
-        st.button("Try Again")
-
+        bird_name = extract_bird_name(output)
+        if bird_name:
+            image_url = get_bird_image(bird_name)
+            if image_url:
+                st.image(image_url, caption=bird_name)
+            else:
+                st.warning("Couldn't fetch an image. Try another description!")
+        else:
+            st.warning("Couldn’t detect a bird name in the result.")
