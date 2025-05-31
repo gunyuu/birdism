@@ -16,7 +16,8 @@ st.write("Describe your personality, habits, or mood — and discover which bird
 user_input = st.text_area("Tell us about yourself:", placeholder="e.g., I'm curious, love the ocean, and enjoy peaceful mornings...")
 
 def get_bird_image(bird_name):
-    """Fetch bird image from Google Custom Search"""
+    import requests
+
     api_key = st.secrets["GOOGLE_API_KEY"]
     cse_id = st.secrets["GOOGLE_CSE_ID"]
     query = f"{bird_name} bird"
@@ -33,9 +34,23 @@ def get_bird_image(bird_name):
 
     try:
         response = requests.get(url, params=params)
+        st.write("🔍 Search URL:", response.url)
+
+        if response.status_code != 200:
+            st.error(f"❌ API request failed with status code {response.status_code}")
+            return None
+
         results = response.json()
-        return results["items"][0]["link"] if "items" in results else None
+        st.json(results)  # Show full JSON response for debugging
+
+        if "items" in results and results["items"]:
+            return results["items"][0]["link"]
+        else:
+            st.warning("No image items found in the search result.")
+            return None
+
     except Exception as e:
+        st.error(f"❌ Image fetch error: {e}")
         return None
 
 def extract_bird_name(text):
