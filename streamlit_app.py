@@ -66,7 +66,6 @@ Fun Fact: [Interesting fact]"""
         st.write("Bird Name:", bird_name)
         if bird_name:
             image_url = get_bird_image(bird_name)
-            st.write("Search URL:", response.url)
 
             if image_url:
                 st.image(image_url, caption=bird_name)
