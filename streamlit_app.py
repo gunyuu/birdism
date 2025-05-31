@@ -4,7 +4,7 @@ import requests
 import re
 
 # Configure Gemini
-genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
+genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
 model = genai.GenerativeModel("models/gemini-1.5-flash")
 
 #configure image search
