@@ -43,7 +43,7 @@ def extract_bird_name(text):
     match = re.search(r"\*\*Your Birdsona: (.+?)\*\*", text)
     return match.group(1).strip() if match else None
 
-if st.button("Reveal My Birdsona") and user_input:
+if st.button("Reveal Reincarnation") and user_input:
     with st.spinner("Consulting the birds..."):
         prompt = f"""You're an expert in matching birds with human personalities. A user wrote:
 
