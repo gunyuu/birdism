@@ -9,7 +9,7 @@ model = genai.GenerativeModel("models/gemini-1.5-flash")
 
 # UI Setup
 st.set_page_config(page_title="Birdsona Generator", page_icon="🐦")
-st.title("🐦 Find Your Birdsona!")
+st.title("🐦 Find what kind of bird are you in the next life!")
 st.write("Describe your personality, habits, or mood — and discover which bird matches you!")
 
 # Text input
@@ -43,7 +43,7 @@ def extract_bird_name(text):
     match = re.search(r"\*\*Your Birdsona: (.+?)\*\*", text)
     return match.group(1).strip() if match else None
 
-if st.button("Reveal My Birdsona") and user_input:
+if st.button("Reveal reincarnation") and user_input:
     with st.spinner("Consulting the birds..."):
         prompt = f"""You're an expert in matching birds with human personalities. A user wrote:
 
@@ -62,9 +62,12 @@ Fun Fact: [Interesting fact]"""
         output = response.text
         st.markdown(output)
 
-        bird_name = extract_bird_name(output)
+        bird_name = extract_bird_name(response.text)
+        st.write("Bird Name:", bird_name)
         if bird_name:
             image_url = get_bird_image(bird_name)
+            st.write("Search URL:", response.url)
+
             if image_url:
                 st.image(image_url, caption=bird_name)
             else:
