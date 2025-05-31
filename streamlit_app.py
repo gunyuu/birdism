@@ -8,14 +8,15 @@ genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
 model = genai.GenerativeModel("models/gemini-1.5-flash")
 
 # UI Setup
-st.set_page_config(page_title="Birdhism Reincarnation", page_icon="🐦")
-st.title("🐦 What kind of bird you will be in the next live?!")
+st.set_page_config(page_title="Birdsona Generator", page_icon="🐦")
+st.title("🐦 Find Your Birdsona!")
 st.write("Describe your personality, habits, or mood — and discover which bird matches you!")
 
 # Text input
 user_input = st.text_area("Tell us about yourself:", placeholder="e.g., I'm curious, love the ocean, and enjoy peaceful mornings...")
 
 def get_bird_image(bird_name):
+    """Fetch bird image from Google Custom Search"""
     api_key = st.secrets["GOOGLE_API_KEY"]
     cse_id = st.secrets["GOOGLE_CSE_ID"]
     query = f"{bird_name} bird"
@@ -33,27 +34,16 @@ def get_bird_image(bird_name):
     try:
         response = requests.get(url, params=params)
         results = response.json()
-
-        # DEBUG: Check what came back
-        # st.json(results)
-
-        if "items" in results and results["items"]:
-            return results["items"][0]["link"]
-        else:
-            st.warning("No image items found in CSE response.")
-            return None
+        return results["items"][0]["link"] if "items" in results else None
     except Exception as e:
-        st.error(f"Image fetch failed: {e}")
         return None
 
-
 def extract_bird_name(text):
-    # Example match: **Your Birdsona: Parrot**
+    """Extract bird name from Gemini response"""
     match = re.search(r"\*\*Your Birdsona: (.+?)\*\*", text)
     return match.group(1).strip() if match else None
 
-
-if st.button("Reveal Reincarnation") and user_input:
+if st.button("Reveal My Birdsona") and user_input:
     with st.spinner("Consulting the birds..."):
         prompt = f"""You're an expert in matching birds with human personalities. A user wrote:
 
@@ -72,12 +62,12 @@ Fun Fact: [Interesting fact]"""
         output = response.text
         st.markdown(output)
 
-        bird_name = extract_bird_name(response.text)
-if bird_name:
-    image_url = get_bird_image(bird_name)
-    if image_url:
-        st.image(image_url, caption=bird_name)
-    else:
-        st.warning("Couldn't fetch an image. Try another description!")
-else:
-    st.warning("Couldn’t detect a bird name in the result.")
+        bird_name = extract_bird_name(output)
+        if bird_name:
+            image_url = get_bird_image(bird_name)
+            if image_url:
+                st.image(image_url, caption=bird_name)
+            else:
+                st.warning("Couldn't fetch an image. Try another description!")
+        else:
+            st.warning("Couldn’t detect a bird name in the result.")
