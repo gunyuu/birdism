@@ -7,6 +7,9 @@ import re
 genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
 model = genai.GenerativeModel("models/gemini-1.5-flash")
 
+#configure image search
+api_key = st.secrets["GOOGLE_API_KEY"]
+
 # UI Setup
 st.set_page_config(page_title="Birdsona Generator", page_icon="🐦")
 st.title("🐦 Find what kind of bird are you in the next life!")
