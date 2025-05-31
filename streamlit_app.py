@@ -5,7 +5,7 @@ import google.generativeai as genai
 genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
 
 # Set up model
-model = genai.GenerativeModel("models/gemini-1.5-flash-latest")
+model = genai.GenerativeModel("models/gemini-1.5-flash")
 
 st.set_page_config(page_title="Birdsona Generator", page_icon="🐦")
 st.title("🐦 Find Your Birdsona!")
