@@ -12,7 +12,7 @@ api_key = st.secrets["GOOGLE_API_KEY"]
 
 # UI Setup
 st.set_page_config(page_title="Birdsona Generator", page_icon="🐦")
-st.title("🐦 what kind of bird are you in the next life?")
+st.title("🐦 what kind of bird are you?")
 st.write("Describe your personality, habits, or mood — and discover which bird matches you!")
 
 # Text input
@@ -61,7 +61,7 @@ def extract_bird_name(text):
     match = re.search(r"\*\*Your Birdsona: (.+?)\*\*", text)
     return match.group(1).strip() if match else None
 
-if st.button("Reveal reincarnation") and user_input:
+if st.button("Watch") and user_input:
     with st.spinner("Consulting the birds..."):
         prompt = f"""You're an expert in matching birds with human personalities. A user wrote:
 
