@@ -12,7 +12,7 @@ api_key = st.secrets["GOOGLE_API_KEY"]
 
 # UI Setup
 st.set_page_config(page_title="Birdsona Generator", page_icon="🐦")
-st.title("🐦 Find what kind of bird are you in the next life!")
+st.title("🐦 what kind of bird are you in the next life?")
 st.write("Describe your personality, habits, or mood — and discover which bird matches you!")
 
 # Text input
