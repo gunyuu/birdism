@@ -11,8 +11,8 @@ model = genai.GenerativeModel("models/gemini-1.5-flash")
 api_key = st.secrets["GOOGLE_API_KEY"]
 
 # UI Setup
-st.set_page_config(page_title="Birdsona Generator", page_icon="🐦")
-st.title("🐦 what kind of bird are you?")
+st.set_page_config(page_title="Birdsona Identificator", page_icon="🐦")
+st.title("🐦 What kind of bird are you?")
 st.write("Describe your personality, habits, or mood — and discover which bird matches you!")
 
 # Text input
